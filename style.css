@@ -1,0 +1,311 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --success-color: #27ae60;
+    --bg-color: #ecf0f1;
+    --card-bg: #ffffff;
+    --text-color: #2c3e50;
+    --border-radius: 12px;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+    animation: slideDown 0.6s ease-out;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+/* Form Section */
+.form-section {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    animation: slideUp 0.6s ease-out 0.1s both;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.95em;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Passport Section */
+.passport-section {
+    animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+.passport-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 3px solid var(--accent-color);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.passport-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.passport-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--accent-color);
+    position: relative;
+    z-index: 1;
+}
+
+.passport-logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--accent-color);
+    letter-spacing: 2px;
+}
+
+.passport-number {
+    background: var(--accent-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+}
+
+.passport-content {
+    flex: 1;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.passport-field {
+    margin-bottom: 18px;
+}
+
+.passport-field label {
+    display: block;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.passport-field p {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--text-color);
+    padding: 8px 0;
+    word-wrap: break-word;
+}
+
+.passport-footer {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    font-size: 0.85em;
+    color: #7f8c8d;
+    position: relative;
+    z-index: 1;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.action-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    max-width: 300px;
+}
+
+.download-btn {
+    background: var(--success-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+}
+
+.new-btn {
+    background: var(--secondary-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+.new-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+}
+
+footer {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.9em;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .passport-card {
+        min-height: auto;
+        padding: 20px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        max-width: 100%;
+    }
+}
