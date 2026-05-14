@@ -35,7 +35,7 @@ function generatePassport() {
 // Send data to Google Sheets
 function sendToGoogleSheets(name, alias, job, id) {
     // Replace this URL with your actual Google Apps Script deployment URL
-    const scriptURL = 'https://script.google.com/macros/d/YOUR_SCRIPT_ID/userweb/app';
+    const scriptURL = 'https://script.google.com/macros/d/11LMWu7JIRKwkrk81RTWIcgP_VSlQy6d0Y3VhzgVoy6M/userweb/app';
 
     const data = {
         name: name,
