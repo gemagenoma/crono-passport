@@ -17,12 +17,7 @@
             <section class="form-section">
                 <form id="passportForm">
                     <div class="form-group">
-                        <label for="title">Title:</label>
-                        <input type="text" id="title" name="title" placeholder="e.g., Senior Developer" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="name">Full Name:</label>
+                        <label for="name">Name:</label>
                         <input type="text" id="name" name="name" placeholder="e.g., John Doe" required>
                     </div>
 
@@ -32,8 +27,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="expertise">Area of Expertise:</label>
-                        <input type="text" id="expertise" name="expertise" placeholder="e.g., Web Development" required>
+                        <label for="job">Job:</label>
+                        <input type="text" id="job" name="job" placeholder="e.g., Web Developer" required>
                     </div>
 
                     <button type="submit" class="submit-btn">Generate Passport</button>
@@ -44,17 +39,12 @@
                 <div class="passport-card">
                     <div class="passport-header">
                         <div class="passport-logo">⏱️ CRONO</div>
-                        <div class="passport-number" id="passportNumber">---</div>
+                        <div class="passport-number" id="passportId">---</div>
                     </div>
 
                     <div class="passport-content">
                         <div class="passport-field">
-                            <label>Title</label>
-                            <p id="displayTitle">---</p>
-                        </div>
-
-                        <div class="passport-field">
-                            <label>Full Name</label>
+                            <label>Name</label>
                             <p id="displayName">---</p>
                         </div>
 
@@ -64,8 +54,8 @@
                         </div>
 
                         <div class="passport-field">
-                            <label>Area of Expertise</label>
-                            <p id="displayExpertise">---</p>
+                            <label>Job</label>
+                            <p id="displayJob">---</p>
                         </div>
 
                         <div class="passport-field">
