@@ -15,7 +15,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Courier New', Courier, monospace;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--text-color);
     min-height: 100vh;
@@ -34,7 +34,7 @@ body {
 .form-section {
     background: var(--card-bg);
     padding: 40px 30px;
-    border-radius: 12px;
+    border-radius: 24px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     animation: slideUp 0.6s ease-out;
 }
@@ -44,9 +44,10 @@ body {
     padding: 14px 16px;
     margin-bottom: 16px;
     border: 2px solid #ddd;
-    border-radius: 8px;
+    border-radius: 16px;
     font-size: 1em;
-    font-family: inherit;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 400;
     transition: all 0.3s ease;
 }
 
@@ -62,9 +63,10 @@ body {
     background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 16px;
     font-size: 1em;
     font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
@@ -86,7 +88,7 @@ body {
 
 .passport-card {
     background: white;
-    border-radius: 12px;
+    border-radius: 24px;
     padding: 60px 40px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
     margin-bottom: 30px;
@@ -100,50 +102,37 @@ body {
 .passport-name {
     font-size: 3.5em;
     font-weight: 700;
+    font-family: 'Courier New', Courier, monospace;
     color: var(--text-color);
     margin-bottom: 20px;
     line-height: 1.1;
+    letter-spacing: 2px;
 }
 
 .passport-alias {
     font-size: 2em;
     font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
     color: var(--text-color);
     margin-bottom: 40px;
+    letter-spacing: 1px;
 }
 
 .passport-job {
     font-size: 1.5em;
     font-weight: 500;
+    font-family: 'Courier New', Courier, monospace;
     color: var(--secondary-color);
     margin-bottom: 40px;
+    letter-spacing: 1px;
 }
 
 .passport-id {
     font-size: 1.1em;
     font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
     color: var(--accent-color);
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-}
-
-.download-btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--success-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
-}
-
-.download-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+    letter-spacing: 3px;
 }
 
 /* Animations */
