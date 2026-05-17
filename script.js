@@ -34,22 +34,26 @@ function generatePassport() {
 
 // Send data to Google Sheets
 function sendToGoogleSheets(name, alias, job, id) {
-    // Replace this URL with your actual Google Apps Script deployment URL
-    const scriptURL = 'https://script.google.com/macros/d/11LMWu7JIRKwkrk81RTWIcgP_VSlQy6d0Y3VhzgVoy6M/userweb/app';
+   /*
+		Pre-filled URL:
+		https://docs.google.com/forms/d/e/1FAIpQLScesUbH2jqt1qE1MFt26vBk9pQkichI3hna3yHr9ta6biDk0Q/viewform
+		?usp=pp_url&entry.88077336=name&entry.1844988031=alias&entry.1579998128=job&entry.27143037=id
+	*/
 
-    const data = {
-        name: name,
-        alias: alias,
-        job: job,
-        id: id
-    };
+	// Prepare data    
+	const formURL = "https://docs.google.com/forms/d/e/1FAIpQLScesUbH2jqt1qE1MFt26vBk9pQkichI3hna3yHr9ta6biDk0Q/formResponse";
+	const data = new URLSearchParams();
+	data.append("entry.88077336", name);
+	data.append("entry.1844988031", alias);
+	data.append("entry.1579998128", job);
+	data.append("entry.27143037", id);
 
-    fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify(data)
-    })
-    .then(response => console.log('Data sent to Google Sheets successfully'))
-    .catch(error => console.log('Note: Google Sheets integration not yet configured. Error:', error));
+	// Send silent POST request
+	fetch(formURL, {
+    method: "POST",
+    	mode: "no-cors", // Stop CORS error message
+    	body: data
+	});
 }
 
 // Download passport as image
