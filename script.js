@@ -20,6 +20,7 @@ function generatePassport() {
     document.getElementById('displayId').textContent = id;
 
     // Show passport section
+	document.getElementById('formSection').style.display = 'none';
     document.getElementById('passportSection').style.display = 'block';
 
     // Send data to Google Sheets
@@ -54,25 +55,3 @@ function sendToGoogleSheets(name, alias, job, id) {
     	body: data
 	});
 }
-
-// Download passport as image
-document.getElementById('downloadBtn').addEventListener('click', function() {
-    const passportCard = document.querySelector('.passport-card');
-    
-    // Use html2canvas library (need to add to HTML)
-    if (typeof html2canvas !== 'undefined') {
-        html2canvas(passportCard, {
-            backgroundColor: '#ffffff',
-            scale: 2
-        }).then(canvas => {
-            const link = document.createElement('a');
-            const id = document.getElementById('displayId').textContent;
-            link.href = canvas.toDataURL('image/png');
-            link.download = `crono-passport-${id}.png`;
-            link.click();
-        });
-    } else {
-        // Fallback: simple screenshot using browser's built-in capabilities
-        alert('Download feature requires html2canvas library. Check README for setup instructions.');
-    }
-});
