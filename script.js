@@ -10,8 +10,9 @@ function updateTimer() {
 }
 
 const event = new Date(2027,0,1);
+const interval = 50 // In milliseconds
 updateTimer();
-setInterval(updateTimer, 100); // Update timer every 100ms
+setInterval(updateTimer, interval);
 
 // Form submission
 document.getElementById('passportForm').addEventListener('submit', function(e) {
