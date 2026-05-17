@@ -8,77 +8,24 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>⏱️ Crono Passport</h1>
-            <p>Generate your personalized passport card</p>
-        </header>
+        <section class="form-section" id="formSection">
+            <form id="passportForm">
+                <input type="text" id="name" placeholder="Nombre" required>
+                <input type="text" id="alias" placeholder="Apodo" required>
+                <input type="text" id="job" placeholder="Tarea" required>
+                <button type="submit" class="submit-btn">Generar Pasaporte</button>
+            </form>
+        </section>
 
-        <main>
-            <section class="form-section">
-                <form id="passportForm">
-                    <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" placeholder="e.g., John Doe" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="alias">Alias:</label>
-                        <input type="text" id="alias" name="alias" placeholder="e.g., Johnny" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="job">Job:</label>
-                        <input type="text" id="job" name="job" placeholder="e.g., Web Developer" required>
-                    </div>
-
-                    <button type="submit" class="submit-btn">Generate Passport</button>
-                </form>
-            </section>
-
-            <section class="passport-section" id="passportSection" style="display: none;">
-                <div class="passport-card">
-                    <div class="passport-header">
-                        <div class="passport-logo">⏱️ CRONO</div>
-                        <div class="passport-number" id="passportId">---</div>
-                    </div>
-
-                    <div class="passport-content">
-                        <div class="passport-field">
-                            <label>Name</label>
-                            <p id="displayName">---</p>
-                        </div>
-
-                        <div class="passport-field">
-                            <label>Alias</label>
-                            <p id="displayAlias">---</p>
-                        </div>
-
-                        <div class="passport-field">
-                            <label>Job</label>
-                            <p id="displayJob">---</p>
-                        </div>
-
-                        <div class="passport-field">
-                            <label>Generated At</label>
-                            <p id="displayTimestamp">---</p>
-                        </div>
-                    </div>
-
-                    <div class="passport-footer">
-                        <p>Valid from generation date</p>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button id="downloadBtn" class="action-btn download-btn">📥 Download as Image</button>
-                    <button id="newPassportBtn" class="action-btn new-btn">🔄 Create New</button>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>&copy; 2026 Crono Passport | Powered by GitHub Pages</p>
-        </footer>
+        <section class="passport-section" id="passportSection" style="display: none;">
+            <div class="passport-card">
+                <div class="passport-name" id="displayName">---</div>
+                <div class="passport-alias" id="displayAlias">---</div>
+                <div class="passport-job" id="displayJob">---</div>
+                <div class="passport-id" id="displayId">---</div>
+            </div>
+            <button id="downloadBtn" class="download-btn">📥 Descargar</button>
+        </section>
     </div>
 
     <script src="script.js"></script>
