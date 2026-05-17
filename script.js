@@ -17,8 +17,7 @@ function generatePassport() {
     document.getElementById('displayName').textContent = name;
     document.getElementById('displayAlias').textContent = alias;
     document.getElementById('displayJob').textContent = job;
-    document.getElementById('passportId').textContent = id;
-    document.getElementById('displayTimestamp').textContent = id;
+    document.getElementById('displayId').textContent = id;
 
     // Show passport section
     document.getElementById('passportSection').style.display = 'block';
@@ -67,7 +66,7 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
             scale: 2
         }).then(canvas => {
             const link = document.createElement('a');
-            const id = document.getElementById('passportId').textContent;
+            const id = document.getElementById('displayId').textContent;
             link.href = canvas.toDataURL('image/png');
             link.download = `crono-passport-${id}.png`;
             link.click();
@@ -77,14 +76,3 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
         alert('Download feature requires html2canvas library. Check README for setup instructions.');
     }
 });
-
-// Create new passport
-document.getElementById('newPassportBtn').addEventListener('click', function() {
-    document.getElementById('passportForm').reset();
-    document.getElementById('passportSection').style.display = 'none';
-    document.getElementById('name').focus();
-});
-
-// Initialize
-console.log('Crono Passport loaded successfully!');
-console.log('Replace the scriptURL in sendToGoogleSheets() with your Google Apps Script URL');
