@@ -1,8 +1,7 @@
 // Countdown timer
 function updateTimer() {
     const now = new Date();
-    const newYear = new Date('2027-01-01T00:00:00').getTime();
-    const timeLeft = newYear - now.getTime();
+    const timeLeft = event - now;
     
     const timerDisplay = document.getElementById('timerDisplay');
     if (timerDisplay) {
@@ -10,9 +9,9 @@ function updateTimer() {
     }
 }
 
-// Update timer every 10ms
+const event = new Date(2027,0,1);
 updateTimer();
-setInterval(updateTimer, 10);
+setInterval(updateTimer, 100); // Update timer every 100ms
 
 // Form submission
 document.getElementById('passportForm').addEventListener('submit', function(e) {
@@ -28,8 +27,7 @@ function generatePassport() {
 
     // Generate ID based on milliseconds until January 1st 2027
     const now = new Date();
-    const newYear = new Date('2027-01-01T00:00:00').getTime();
-    const id = Math.max(0, newYear - now.getTime());
+    const id = Math.max(0, event - now);
 
     // Display passport
     document.getElementById('displayName').textContent = name;
