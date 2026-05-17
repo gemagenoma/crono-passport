@@ -1,3 +1,19 @@
+// Countdown timer
+function updateTimer() {
+    const now = new Date();
+    const newYear = new Date('2027-01-01T00:00:00').getTime();
+    const timeLeft = newYear - now.getTime();
+    
+    const timerDisplay = document.getElementById('timerDisplay');
+    if (timerDisplay) {
+        timerDisplay.textContent = Math.max(0, timeLeft);
+    }
+}
+
+// Update timer every 10ms
+updateTimer();
+setInterval(updateTimer, 10);
+
 // Form submission
 document.getElementById('passportForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -10,8 +26,10 @@ function generatePassport() {
     const alias = document.getElementById('alias').value;
     const job = document.getElementById('job').value;
 
-    // Generate Unix timestamp as ID
-    const id = Math.floor(Date.now() / 1000);
+    // Generate ID based on milliseconds until January 1st 2027
+    const now = new Date();
+    const newYear = new Date('2027-01-01T00:00:00').getTime();
+    const id = Math.max(0, newYear - now.getTime());
 
     // Display passport
     document.getElementById('displayName').textContent = name;
@@ -50,8 +68,11 @@ function sendToGoogleSheets(name, alias, job, id) {
 
 	// Send silent POST request
 	fetch(formURL, {
-    method: "POST",
-    	mode: "no-cors", // Stop CORS error message
-    	body: data
+     method: "POST",
+     	mode: "no-cors", // Stop CORS error message
+     	body: data
 	});
 }
+
+// Initialize
+console.log('Crono Passport loaded successfully!');
