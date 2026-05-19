@@ -42,7 +42,7 @@ body {
 .form-section input {
     width: 100%;
     padding: 14px 16px;
-    margin: 20px;
+    margin-bottom: 25px;
     border: 2px solid #ddd;
     border-radius: 16px;
     font-size: 1em;
