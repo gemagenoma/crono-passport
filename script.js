@@ -1,16 +1,22 @@
+
+const event = new Date(2027,0,1);
+const interval = 10
+// Get time left in centiseconds
+function getTimeLeft() {
+    const now = new Date();
+    const timeLeft = (event - now) / interval;
+	return Math.floor(timeLeft)
+} 
+
 // Countdown timer
 function updateTimer() {
-    const now = new Date();
-    const timeLeft = event - now;
     
     const timerDisplay = document.getElementById('timerDisplay');
     if (timerDisplay) {
-        timerDisplay.textContent = Math.max(0, timeLeft);
+        timerDisplay.textContent = getTimeLeft();
     }
 }
 
-const event = new Date(2027,0,1);
-const interval = 50 // In milliseconds
 updateTimer();
 setInterval(updateTimer, interval);
 
@@ -20,15 +26,39 @@ document.getElementById('passportForm').addEventListener('submit', function(e) {
     generatePassport();
 });
 
+// Hide Fields
+function hideFields() {
+	document.getElementById('alias').style.display = 'none';
+	document.getElementById('job').style.display = 'none';
+	document.getElementById('generate').style.display = 'none';
+}
+
+// Show Alias
+document.getElementById('name').addEventListener('input', function (evt) {
+    if(this.value.length > 0) document.getElementById('alias').style.display = 'block'
+		else hideFields();
+});
+
+// Show job
+document.getElementById('alias').addEventListener('input', function (evt) {
+    if(this.value.length > 0) document.getElementById('job').style.display = 'block'
+	else hideFields();
+});
+
+// Show button
+document.getElementById('job').addEventListener('input', function (evt) {
+    if(this.value.length > 0) document.getElementById('generate').style.display = 'block'
+	else hideFields();
+});
+
 // Generate passport
 function generatePassport() {
-    const name = document.getElementById('name').value;
-    const alias = document.getElementById('alias').value;
-    const job = document.getElementById('job').value;
+    const name = document.getElementById('name').value.trim();
+    const alias = document.getElementById('alias').value.trim();
+    const job = document.getElementById('job').value.trim();
 
     // Generate ID based on milliseconds until January 1st 2027
-    const now = new Date();
-    const id = Math.max(0, event - now);
+    const id = getTimeLeft();
 
     // Display passport
     document.getElementById('displayName').textContent = name;

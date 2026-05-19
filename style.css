@@ -42,7 +42,7 @@ body {
 .form-section input {
     width: 100%;
     padding: 14px 16px;
-    margin-bottom: 16px;
+    margin: 20px;
     border: 2px solid #ddd;
     border-radius: 16px;
     font-size: 1em;
@@ -60,7 +60,7 @@ body {
 /* Timer Container */
 .timer-container {
     text-align: center;
-    margin-bottom: 20px;
+    margin: 20px;
     padding: 15px;
     background: #f0f8ff;
     border-radius: 12px;
@@ -150,7 +150,7 @@ body {
     font-weight: 600;
     font-family: 'Courier New', Courier, monospace;
     color: var(--accent-color);
-    letter-spacing: 3px;
+    letter-spacing: 1px;
 }
 
 /* Animations */
