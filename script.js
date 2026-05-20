@@ -42,13 +42,16 @@ document.getElementById('name').addEventListener('input', function (evt) {
 // Show job
 document.getElementById('alias').addEventListener('input', function (evt) {
     if(this.value.length > 0) document.getElementById('job').style.display = 'block'
-	else hideFields();
+	else {
+        document.getElementById('job').style.display = 'none';
+        document.getElementById('generate').style.display = 'none';
+    }
 });
 
 // Show button
 document.getElementById('job').addEventListener('input', function (evt) {
     if(this.value.length > 0) document.getElementById('generate').style.display = 'block'
-	else hideFields();
+	else document.getElementById('generate').style.display = 'none';
 });
 
 // Generate passport
