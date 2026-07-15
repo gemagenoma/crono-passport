@@ -103,6 +103,7 @@ document.getElementById('email').addEventListener('input', function (evt) {
 document.getElementById('email').addEventListener('blur', async function (evt) {
     const email = this.value.trim();
     const emailError = document.getElementById('emailError');
+    const emailStatus = document.getElementById('emailStatus');
     const generateBtn = document.getElementById('generate');
 
     // Reset any prior confirmation before re-validating
@@ -115,6 +116,10 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
     if (!isValidEmailFormat(email)) {
         return;
     }
+
+    // Show the loading indicator while the backend validates the email
+    emailError.textContent = '';
+    emailStatus.style.display = 'flex';
 
     try {
         const response = await fetch('/api/validate-email', {
@@ -147,13 +152,17 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
         console.error('[v0] Error validating email:', error);
         emailError.textContent = 'Ocurrió un error inesperado. Inténtalo de nuevo más tarde.';
         this.classList.add('error');
+    } finally {
+        // Always hide the loading indicator when the request settles
+        emailStatus.style.display = 'none';
     }
 });
 
 // Generate passport
-function generatePassport() {
+async function generatePassport() {
     const email = document.getElementById('email').value.trim();
     const emailError = document.getElementById('emailError');
+    const generateBtn = document.getElementById('generate');
 
     // Do not generate until the backend confirmed a completely valid email
     if (!emailValidated) {
@@ -169,6 +178,17 @@ function generatePassport() {
     // Generate ID based on milliseconds until January 1st 2027
     const id = getTimeLeft();
 
+    // Show loading state on the button while sending data
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<span class="spinner" aria-hidden="true"></span>Generando...';
+
+    // Send data to Google Sheets and wait for the request to settle
+    await sendToGoogleSheets(name, alias, job, id, email);
+
+    // Restore the button label
+    generateBtn.disabled = false;
+    generateBtn.textContent = 'Generar Pasaporte';
+
     // Display passport
     document.getElementById('displayName').textContent = name;
     document.getElementById('displayAlias').textContent = alias;
@@ -178,9 +198,6 @@ function generatePassport() {
     // Show passport section
 	document.getElementById('formSection').style.display = 'none';
     document.getElementById('passportSection').style.display = 'block';
-
-    // Send data to Google Sheets
-    sendToGoogleSheets(name, alias, job, id, email);
 
     // Scroll to passport
     setTimeout(() => {
@@ -205,11 +222,14 @@ function sendToGoogleSheets(name, alias, job, id, email) {
 	data.append("entry.27143037", id);
 	data.append("entry.1234567890", email); // Update with correct email entry ID if needed
 
-	// Send silent POST request
-	fetch(formURL, {
+	// Send silent POST request and return the promise so callers can await it
+	return fetch(formURL, {
      method: "POST",
      	mode: "no-cors", // Stop CORS error message
      	body: data
+	}).catch((error) => {
+		// Swallow network errors: the submission is best-effort (no-cors)
+		console.error('[v0] Error sending to Google Sheets:', error);
 	});
 }
 

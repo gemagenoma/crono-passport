@@ -15,6 +15,10 @@
                 <input type="text" id="job" placeholder="¿Cuál será tu ocupación en la Abadía?" style="display: none;" required>
                 <div id="emailContainer" style="display: none;">
                     <input type="email" id="email" placeholder="¿Cuál es tu correo electrónico?" required>
+                    <div class="status-message" id="emailStatus" style="display: none;">
+                        <span class="spinner" aria-hidden="true"></span>
+                        <span>Validando correo...</span>
+                    </div>
                     <div class="error-message" id="emailError"></div>
                 </div>
 				<button id="generate" type="submit" class="submit-btn" style="display: none;">Generar Pasaporte</button>
