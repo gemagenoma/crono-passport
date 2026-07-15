@@ -9,6 +9,7 @@
     --secondary-color: #3498db;
     --accent-color: #34495e;
     --success-color: #27ae60;
+    --error-color: #e8bab8;
     --bg-color: #ecf0f1;
     --card-bg: #ffffff;
     --text-color: #2c3e50;
@@ -56,6 +57,24 @@ body {
     outline: none;
     border-color: var(--secondary-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-section input.error {
+    border-color: var(--error-color);
+}
+
+.form-section input.error:focus {
+    box-shadow: 0 0 0 3px rgba(232, 186, 184, 0.2);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.9em;
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: -20px;
+    margin-bottom: 15px;
+    min-height: 1.2em;
+    animation: slideUp 0.3s ease-out;
 }
 
 /* Timer Container */
