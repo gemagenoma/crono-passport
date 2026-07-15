@@ -29,7 +29,7 @@ document.getElementById('passportForm').addEventListener('submit', function(e) {
 // Hide Fields
 function hideFields() {
 	document.getElementById('alias').style.display = 'none';
-	document.getElementById('job').style.display = 'none';
+	document.getElementById('emailContainer').style.display = 'none';
 	document.getElementById('generate').style.display = 'none';
 }
 
@@ -39,10 +39,11 @@ document.getElementById('name').addEventListener('input', function (evt) {
 		else hideFields();
 });
 
-// Show job
-document.getElementById('job').addEventListener('input', function (evt) {
-    if(this.value.length > 0) document.getElementById('emailContainer').style.display = 'block'
-	else {
+// Show email container
+document.getElementById('alias').addEventListener('input', function (evt) {
+    if (this.value.length > 0) {
+        document.getElementById('emailContainer').style.display = 'block';
+    } else {
         document.getElementById('emailContainer').style.display = 'none';
         document.getElementById('generate').style.display = 'none';
     }
@@ -117,17 +118,10 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
     }
 });
 
-// Show button
-document.getElementById('job').addEventListener('input', function (evt) {
-    if(this.value.length > 0) document.getElementById('generate').style.display = 'block'
-	else document.getElementById('generate').style.display = 'none';
-});
-
 // Generate passport
 function generatePassport() {
     const name = document.getElementById('name').value.trim();
     const alias = document.getElementById('alias').value.trim();
-    const job = document.getElementById('job').value.trim();
     const email = document.getElementById('email').value.trim();
 
     // Generate ID based on milliseconds until January 1st 2027
@@ -136,7 +130,6 @@ function generatePassport() {
     // Display passport
     document.getElementById('displayName').textContent = name;
     document.getElementById('displayAlias').textContent = alias;
-    document.getElementById('displayJob').textContent = job;
     document.getElementById('displayId').textContent = id;
 
     // Show passport section
@@ -144,7 +137,7 @@ function generatePassport() {
     document.getElementById('passportSection').style.display = 'block';
 
     // Send data to Google Sheets
-    sendToGoogleSheets(name, alias, job, id, email);
+    sendToGoogleSheets(name, alias, id, email);
 
     // Scroll to passport
     setTimeout(() => {
@@ -153,11 +146,11 @@ function generatePassport() {
 }
 
 // Send data to Google Sheets
-function sendToGoogleSheets(name, alias, job, id, email) {
+function sendToGoogleSheets(name, alias, id, email) {
    /*
 		Pre-filled URL:
 		https://docs.google.com/forms/d/e/1FAIpQLScesUbH2jqt1qE1MFt26vBk9pQkichI3hna3yHr9ta6biDk0Q/viewform
-		?usp=pp_url&entry.88077336=name&entry.1844988031=alias&entry.1579998128=job&entry.27143037=id
+		?usp=pp_url&entry.88077336=name&entry.1844988031=alias&entry.27143037=id
 	*/
 
 	// Prepare data    
@@ -165,7 +158,6 @@ function sendToGoogleSheets(name, alias, job, id, email) {
 	const data = new URLSearchParams();
 	data.append("entry.88077336", name);
 	data.append("entry.1844988031", alias);
-	data.append("entry.1579998128", job);
 	data.append("entry.27143037", id);
 	data.append("entry.1234567890", email); // Update with correct email entry ID if needed
 
