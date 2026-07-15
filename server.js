@@ -322,7 +322,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
+// Bind to the port the platform/preview exposes. The v0 preview detects the
+// open port from the dev server (DEV_PORT), falling back to PORT then 3000.
+const PORT = process.env.PORT || process.env.DEV_PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
