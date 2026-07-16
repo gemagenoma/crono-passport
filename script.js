@@ -1,10 +1,10 @@
 
 const event = new Date(2027,0,1);
-const interval = 10
+const timerInterval = 10;
 // Get time left in centiseconds
 function getTimeLeft() {
     const now = new Date();
-    const timeLeft = (event - now) / interval;
+    const timeLeft = (event - now) / timerInterval;
 	return Math.floor(timeLeft)
 } 
 
@@ -18,7 +18,7 @@ function updateTimer() {
 }
 
 updateTimer();
-setInterval(updateTimer, interval);
+setInterval(updateTimer, timerInterval);
 
 // Form submission
 document.getElementById('passportForm').addEventListener('submit', function(e) {
