@@ -11,31 +11,54 @@
     --success-color: #27ae60;
     --error-color: #e8bab8;
     --bg-color: #ecf0f1;
-    --card-bg: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.15);
     --text-color: #2c3e50;
 }
 
 body {
     font-family: 'Courier New', Courier, monospace;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--text-color);
     min-height: 100vh;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .container {
     width: 100%;
     max-width: 600px;
+    position: relative;
+    z-index: 10;
 }
 
 /* Form Section */
 .form-section {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     padding: 40px 30px;
     border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     animation: slideUp 0.6s ease-out;
 }
@@ -44,19 +67,22 @@ body {
     width: 100%;
     padding: 14px 16px;
     margin-bottom: 25px;
-    border: 2px solid #ddd;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     font-size: 1em;
     font-family: 'Courier New', Courier, monospace;
     font-weight: 400;
     transition: all 0.6s ease;
     animation: slideUp 0.6s ease-out;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-color);
 }
 
 .form-section input:focus {
     outline: none;
     border-color: var(--secondary-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .form-section input.error {
@@ -127,7 +153,7 @@ body {
     text-align: center;
     margin: 20px;
     padding: 15px;
-    background: #f0f8ff;
+    background: rgba(240, 248, 255, 0.85);
     border-radius: 12px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.95em;
@@ -171,7 +197,7 @@ body {
 }
 
 .passport-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 24px;
     padding: 60px 40px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
@@ -181,6 +207,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+    z-index: 10;
 }
 
 .passport-name {
