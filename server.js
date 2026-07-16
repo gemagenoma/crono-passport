@@ -325,6 +325,13 @@ app.get('/', (req, res) => {
 // Bind to the port the platform/preview exposes. The v0 preview detects the
 // open port from the dev server (DEV_PORT), falling back to PORT then 3000.
 const PORT = process.env.PORT || process.env.DEV_PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+// Start a listener only when this file is run directly. Vercel imports the
+// Express app from api/validate-email.js as a serverless function instead.
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

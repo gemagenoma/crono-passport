@@ -70,6 +70,13 @@ function isValidEmailFormat(email) {
     return emailRegex.test(email);
 }
 
+function setRequestLoading(isLoading, message = '') {
+    const status = document.getElementById('emailStatus');
+    const statusText = document.getElementById('emailStatusText');
+    statusText.textContent = message;
+    status.style.display = isLoading ? 'flex' : 'none';
+}
+
 // Frontend validate email while typing
 document.getElementById('email').addEventListener('input', function (evt) {
     const emailError = document.getElementById('emailError');
@@ -103,7 +110,6 @@ document.getElementById('email').addEventListener('input', function (evt) {
 document.getElementById('email').addEventListener('blur', async function (evt) {
     const email = this.value.trim();
     const emailError = document.getElementById('emailError');
-    const emailStatus = document.getElementById('emailStatus');
     const generateBtn = document.getElementById('generate');
 
     // Reset any prior confirmation before re-validating
@@ -119,7 +125,7 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
 
     // Show the loading indicator while the backend validates the email
     emailError.textContent = '';
-    emailStatus.style.display = 'flex';
+    setRequestLoading(true, 'Validando correo...');
 
     try {
         const response = await fetch('/api/validate-email', {
@@ -153,8 +159,8 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
         emailError.textContent = 'Ocurrió un error inesperado. Inténtalo de nuevo más tarde.';
         this.classList.add('error');
     } finally {
-        // Always hide the loading indicator when the request settles
-        emailStatus.style.display = 'none';
+        // Always hide the shared loading indicator when the request settles
+        setRequestLoading(false);
     }
 });
 
@@ -178,16 +184,16 @@ async function generatePassport() {
     // Generate ID based on milliseconds until January 1st 2027
     const id = getTimeLeft();
 
-    // Show loading state on the button while sending data
+    // Use the same loading indicator as email validation while submitting.
     generateBtn.disabled = true;
-    generateBtn.innerHTML = '<span class="spinner" aria-hidden="true"></span>Generando...';
+    setRequestLoading(true, 'Enviando datos...');
 
-    // Send data to Google Sheets and wait for the request to settle
-    await sendToGoogleSheets(name, alias, job, id, email);
-
-    // Restore the button label
-    generateBtn.disabled = false;
-    generateBtn.textContent = 'Generar Pasaporte';
+    try {
+        await sendToGoogleSheets(name, alias, job, id, email);
+    } finally {
+        setRequestLoading(false);
+        generateBtn.disabled = false;
+    }
 
     // Display passport
     document.getElementById('displayName').textContent = name;
