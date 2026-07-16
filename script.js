@@ -29,6 +29,9 @@ document.getElementById('passportForm').addEventListener('submit', function(e) {
 // Tracks whether the backend confirmed the email is completely valid
 let emailValidated = false;
 
+// Debounce timer for email validation
+let emailValidationTimeout;
+
 // Hide Fields
 function hideFields() {
 	document.getElementById('alias').style.display = 'none';
@@ -77,38 +80,8 @@ function setRequestLoading(isLoading, message = '') {
     status.style.display = isLoading ? 'flex' : 'none';
 }
 
-// Frontend validate email while typing
-document.getElementById('email').addEventListener('input', function (evt) {
-    const emailError = document.getElementById('emailError');
-    const email = this.value.trim();
-
-    // Any change invalidates a previous backend confirmation
-    emailValidated = false;
-    document.getElementById('generate').style.display = 'none';
-
-    // Check if empty
-    if (email.length === 0) {
-        emailError.textContent = '';
-        this.classList.remove('error');
-        return;
-    }
-
-    // Check syntax
-    if (!isValidEmailFormat(email)) {
-        emailError.textContent = 'Por favor, introduce un correo válido';
-        this.classList.add('error');
-        return;
-    }
-
-    // Frontend syntax is valid. The submit button stays hidden until the
-    // backend confirms the email is completely valid (on blur).
-    this.classList.remove('error');
-    emailError.textContent = '';
-});
-
-// Validate email on blur (backend validation)
-document.getElementById('email').addEventListener('blur', async function (evt) {
-    const email = this.value.trim();
+// Validate email with backend - debounced to 1 second
+async function validateEmailWithBackend(email) {
     const emailError = document.getElementById('emailError');
     const generateBtn = document.getElementById('generate');
 
@@ -116,10 +89,14 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
     emailValidated = false;
     generateBtn.style.display = 'none';
 
-    if (!email) return;
+    if (!email) {
+        setRequestLoading(false);
+        return;
+    }
 
     // Skip the backend call if the frontend syntax check already failed
     if (!isValidEmailFormat(email)) {
+        setRequestLoading(false);
         return;
     }
 
@@ -137,7 +114,7 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
         // Handle unexpected server/client errors (4xx / 5xx)
         if (!response.ok) {
             emailError.textContent = 'Ocurrió un error inesperado. Inténtalo de nuevo más tarde.';
-            this.classList.add('error');
+            document.getElementById('email').classList.add('error');
             return;
         }
 
@@ -145,23 +122,65 @@ document.getElementById('email').addEventListener('blur', async function (evt) {
 
         if (!result.valid) {
             emailError.textContent = result.error || 'Correo no válido';
-            this.classList.add('error');
+            document.getElementById('email').classList.add('error');
         } else {
             // Backend confirmed the email is completely valid
             emailValidated = true;
             emailError.textContent = '';
-            this.classList.remove('error');
+            document.getElementById('email').classList.remove('error');
             generateBtn.style.display = 'block';
         }
     } catch (error) {
         // Network failure or unexpected client-side problem
         console.error('[v0] Error validating email:', error);
         emailError.textContent = 'Ocurrió un error inesperado. Inténtalo de nuevo más tarde.';
-        this.classList.add('error');
+        document.getElementById('email').classList.add('error');
     } finally {
         // Always hide the shared loading indicator when the request settles
         setRequestLoading(false);
     }
+}
+
+// Frontend validate email while typing
+document.getElementById('email').addEventListener('input', function (evt) {
+    const emailError = document.getElementById('emailError');
+    const email = this.value.trim();
+
+    // Any change invalidates a previous backend confirmation
+    emailValidated = false;
+    document.getElementById('generate').style.display = 'none';
+
+    // Check if empty
+    if (email.length === 0) {
+        emailError.textContent = '';
+        this.classList.remove('error');
+        clearTimeout(emailValidationTimeout);
+        setRequestLoading(false);
+        return;
+    }
+
+    // Check syntax
+    if (!isValidEmailFormat(email)) {
+        emailError.textContent = 'Por favor, introduce un correo válido';
+        this.classList.add('error');
+        clearTimeout(emailValidationTimeout);
+        setRequestLoading(false);
+        return;
+    }
+
+    // Frontend syntax is valid. Clear any pending timeout and set a new one.
+    // This ensures we wait 1 second after the user stops typing before validating.
+    clearTimeout(emailValidationTimeout);
+    this.classList.remove('error');
+    emailError.textContent = '';
+    
+    // Set loading indicator to show we're waiting
+    setRequestLoading(true, 'Esperando...');
+    
+    // Debounce: wait 1 second before sending request
+    emailValidationTimeout = setTimeout(() => {
+        validateEmailWithBackend(email);
+    }, 1000);
 });
 
 // Generate passport
