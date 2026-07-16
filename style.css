@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+html {
+    background: linear-gradient(135deg, #0a0a2e 0%, #16213e 50%, #0f3460 100%);
+    width: 100%;
+    height: 100%;
+}
+
 :root {
     --primary-color: #2c3e50;
     --secondary-color: #3498db;
@@ -28,7 +34,6 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: linear-gradient(135deg, #0a0a2e 0%, #16213e 50%, #0f3460 100%);
 }
 
 #canvas-container {
