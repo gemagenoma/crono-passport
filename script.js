@@ -235,7 +235,7 @@ function sendToGoogleSheets(name, alias, job, id, email) {
    /*
 		Pre-filled URL:
 		https://docs.google.com/forms/d/e/1FAIpQLScesUbH2jqt1qE1MFt26vBk9pQkichI3hna3yHr9ta6biDk0Q/viewform
-		?usp=pp_url&entry.88077336=name&entry.1844988031=alias&entry.1579998128=job&entry.27143037=id
+		?usp=pp_url&entry.88077336=name&entry.1844988031=alias&entry.1579998128=job&entry.198676562=email&entry.27143037=id
 	*/
 
 	// Prepare data    
@@ -244,8 +244,8 @@ function sendToGoogleSheets(name, alias, job, id, email) {
 	data.append("entry.88077336", name);
 	data.append("entry.1844988031", alias);
 	data.append("entry.1579998128", job);
+	data.append("entry.198676562", email);
 	data.append("entry.27143037", id);
-	data.append("entry.1234567890", email); // Update with correct email entry ID if needed
 
 	// Send silent POST request and return the promise so callers can await it
 	return fetch(formURL, {
