@@ -20,18 +20,22 @@ function getTime(event) {
 	return Math.floor(timeLeft)
 } 
 
-// Globe data
+// Globe data - updated with new locations from crono-world
 const locations = [
     { date: new Date(415,1,5,4,3,23,143), name: 'Alejandría', lat: 31.2001, lon: 29.9187, label: 1, color: accentColor },
     { date: new Date(-380,2,4,4,1,13,533), name: 'Atenas', lat: 37.9838, lon: 23.7275, label: 2, color: accentColor },
-    { date: new Date(1010,3,3,1,9,43,87), name: 'El Cairo', lat: 30.0444, lon: 31.2357, label: 3, color: accentColor },
+    { date: new Date(964, 5, 3, 4, 8, 12, 942), name: 'Isfahan', lat: 32.6546, lon: 51.6680, label: 3, color: accentColor },
     { date: new Date(1690,4,2,8,2,34,52), name: 'Méjico', lat: 19.4326, lon: -99.1332, label: 4, color: accentColor },
     { date: new Date(1898,5,1,7,10,53,24), name: 'Paris', lat: 48.8566, lon: 2.3522, label: 5, color: accentColor },
 	{ date: new Date(1769,6,13,10,32,21,3), name: 'Tahiti', lat: -17.5028, lon: -149.4931, label: 6, color: accentColor },
 	{ date: new Date(-5000, 1, 2, 23, 56, 32, 341), name: 'Yuyao', lat: 29.9642, lon: 121.3444, label: 7, color: accentColor },
 	{ date: new Date(-259000, 10, 7, 4, 3, 6, 54), name: 'Florisbad', lat: -28.7660, lon: 26.0830, label: 8, color: accentColor },
 	{ date: new Date(1520, 11, 28, 12, 4, 1, 43), name: 'Estrecho de Magallanes', lat: -53.6000, lon: -70.9000, label: 9, color: accentColor },
-	{ date: new Date(1946, 5, 1, 8, 24, 21, 98), name: 'Pilbara', lat: -20.3107, lon: 118.5753, label: 10, color: accentColor }
+	{ date: new Date(1946, 5, 1, 8, 24, 21, 98), name: 'Pilbara', lat: -20.3107, lon: 118.5753, label: 10, color: accentColor },
+	{ date: new Date(628, 1, 1, 0, 0, 0, 0), name: 'Madhya Pradesh', lat: 26.2295, lon: 78.1738, label: 11, color: accentColor },
+	{ date: new Date(1893, 9, 19, 12, 2, 21, 376), name: 'Wellington', lat: -41.2865, lon: 174.7762, label: 12, color: accentColor },
+	{ date: new Date(-22000, 8, 3, 4, 2, 24, 473), name: 'Yukon', lat: 67.4833, lon: -139.9167, label: 13, color: accentColor },
+	{ date: new Date(1911, 1, 14, 12, 22, 12, 874), name: 'Bahía de las Ballenas', lat: -78.6333, lon: -164.3333, label: 14, color: accentColor }
 ];
 
 // Convert lat/lon to 3D coordinates on sphere
@@ -85,24 +89,30 @@ locations.forEach((loc) => {
     point.userData = { name: loc.name, label: loc.label };
     pointsGroup.add(point);
     
-    // Create floating text label
+    // Create floating text label (larger canvas to avoid truncation and fix clipping)
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = 256;
-    canvas.height = 64;
+    // Increased canvas size and height to fit longer text
+    canvas.width = 512;
+    canvas.height = 128;
     
     context.fillStyle = '#d0c8e0';
-    context.font = 'Bold 32px Courier New';
+    context.font = 'Bold 40px Courier New';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(getTime(loc.date), 128, 32);
+    context.fillText(getTime(loc.date), canvas.width / 2, canvas.height / 2);
     
     const texture = new THREE.CanvasTexture(canvas);
-    const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+    texture.minFilter = THREE.LinearFilter; // better for dynamic textures
+    const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(0.5, 0.125, 1);
+    // Scale adjusted to match larger canvas
+    sprite.scale.set(1.0, 0.25, 1);
     sprite.position.copy(pos).normalize().multiplyScalar(1.12);
     textLabelsGroup.add(sprite);
+
+    // Keep references so we can update the text every interval
+    labelsArray.push({ canvas, context, texture, sprite, date: loc.date });
 
     // Create convergence line with dots
     const linePoints = [];
@@ -154,6 +164,17 @@ scene.add(pointLight);
 
 // Animation
 let time = 0;
+// Track last label update
+let lastLabelUpdate = performance.now();
+
+// Set a random initial longitude for the globe and all related groups
+const initialRotation = Math.random() * Math.PI * 2;
+globe.rotation.y = initialRotation;
+atmosphere.rotation.y = initialRotation;
+pointsGroup.rotation.y = initialRotation;
+linesGroup.rotation.y = initialRotation;
+textLabelsGroup.rotation.y = initialRotation;
+
 function animate() {
     requestAnimationFrame(animate);
     
@@ -171,6 +192,23 @@ function animate() {
         const scale = 1 + Math.sin(time + index * 0.5) * 0.5;
         child.scale.set(scale, scale, scale);
     });
+
+    // Update label textures every `interval` milliseconds
+    const now = performance.now();
+    if (now - lastLabelUpdate >= interval) {
+        labelsArray.forEach((lbl) => {
+            const { canvas, context, texture, date } = lbl;
+            // Clear and redraw
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = '#d0c8e0';
+            context.font = 'Bold 40px Courier New';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(getTime(date), canvas.width / 2, canvas.height / 2);
+            texture.needsUpdate = true;
+        });
+        lastLabelUpdate = now;
+    }
     
     renderer.render(scene, camera);
 }
