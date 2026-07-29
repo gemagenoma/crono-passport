@@ -1,4 +1,3 @@
-
 const event = new Date(2027,0,1);
 const timerInterval = 10;
 // Get time left in centiseconds
@@ -187,7 +186,7 @@ let isTimerDecelerating = false;
 function easeOutQuad(t) { return t * (2 - t); }
 
 function startTimerDeceleration(duration = 3000) {
-    if (isTimerDecelerating) return;
+    if (isTimerDecelerating) return Promise.resolve();
     isTimerDecelerating = true;
 
     // Stop the regular fast interval updates
@@ -196,28 +195,32 @@ function startTimerDeceleration(duration = 3000) {
     const startTime = performance.now();
     const freezeValue = getTimeLeft();
 
-    function step(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        // eased progress for deceleration
-        const eased = easeOutQuad(progress);
+    return new Promise((resolve) => {
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // eased progress for deceleration
+            const eased = easeOutQuad(progress);
 
-        // Real value continues decreasing, but we blend it toward the freeze value
-        const realValue = getTimeLeft();
-        const displayValue = Math.round(realValue * (1 - eased) + freezeValue * eased);
+            // Real value continues decreasing, but we blend it toward the freeze value
+            const realValue = getTimeLeft();
+            const displayValue = Math.round(realValue * (1 - eased) + freezeValue * eased);
 
-        const timerDisplay = document.getElementById('timerDisplay');
-        if (timerDisplay) timerDisplay.textContent = displayValue;
+            const timerDisplay = document.getElementById('timerDisplay');
+            if (timerDisplay) timerDisplay.textContent = displayValue;
 
-        if (progress < 1) {
-            requestAnimationFrame(step);
-        } else {
-            // final freeze
-            if (timerDisplay) timerDisplay.textContent = Math.round(freezeValue);
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                // final freeze
+                if (timerDisplay) timerDisplay.textContent = Math.round(freezeValue);
+                isTimerDecelerating = false;
+                resolve();
+            }
         }
-    }
 
-    requestAnimationFrame(step);
+        requestAnimationFrame(step);
+    });
 }
 
 // Generate passport
@@ -244,8 +247,8 @@ async function generatePassport() {
     hideFields();
 
     // Start decelerations for the UI counters and the globe
-    startTimerDeceleration(3000);
-    if (window.startGlobeDeceleration) window.startGlobeDeceleration(3000);
+    const timerPromise = startTimerDeceleration(3000);
+    const globePromise = (window.startGlobeDeceleration) ? window.startGlobeDeceleration(3000) : Promise.resolve();
 
     // Use the same loading indicator as email validation while submitting.
     generateBtn.disabled = true;
@@ -257,6 +260,9 @@ async function generatePassport() {
         setRequestLoading(false);
         generateBtn.disabled = false;
     }
+
+    // Wait for both decelerations to finish before showing the passport
+    await Promise.all([timerPromise, globePromise]);
 
     // Display passport
     document.getElementById('displayName').textContent = name;
