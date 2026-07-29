@@ -183,11 +183,22 @@ let baseRotationSpeed = rotationSpeed;
 let globeDecelerating = false;
 let globeDecelStart = 0;
 let globeDecelDuration = 0;
+let globeDecelResolve = null;
 function easeOutQuad(t) { return t * (2 - t); }
 
 // Expose a global function script.js can call to start deceleration
 function startGlobeDeceleration(duration = 3000) {
-    if (globeDecelerating) return;
+    // If already decelerating, return a Promise that resolves when current decel finishes
+    if (globeDecelerating) {
+        return new Promise((resolve) => {
+            const check = () => {
+                if (!globeDecelerating) resolve();
+                else requestAnimationFrame(check);
+            };
+            check();
+        });
+    }
+
     globeDecelerating = true;
     globeDecelStart = performance.now();
     globeDecelDuration = duration;
@@ -195,6 +206,11 @@ function startGlobeDeceleration(duration = 3000) {
     // Capture freeze values for each label so we can blend toward them
     labelsArray.forEach(lbl => {
         lbl.freezeValue = getTime(lbl.date);
+    });
+
+    // Return a Promise that resolves when deceleration completes
+    return new Promise((resolve) => {
+        globeDecelResolve = resolve;
     });
 }
 window.startGlobeDeceleration = startGlobeDeceleration;
@@ -247,6 +263,12 @@ function animate() {
                 context.fillText(finalValue, canvas.width / 2, canvas.height / 2);
                 texture.needsUpdate = true;
             });
+
+            // Resolve any awaiting promise
+            if (typeof globeDecelResolve === 'function') {
+                globeDecelResolve();
+                globeDecelResolve = null;
+            }
         }
     } else {
         // Normal label updates (existing behavior, throttled by `interval`)
