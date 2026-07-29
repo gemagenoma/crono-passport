@@ -175,16 +175,103 @@ pointsGroup.rotation.y = initialRotation;
 linesGroup.rotation.y = initialRotation;
 textLabelsGroup.rotation.y = initialRotation;
 
+// Rotation speed moved to top-level so it can be decelerated
+let rotationSpeed = 0.002;
+let baseRotationSpeed = rotationSpeed;
+
+// Deceleration state for globe and labels
+let globeDecelerating = false;
+let globeDecelStart = 0;
+let globeDecelDuration = 0;
+function easeOutQuad(t) { return t * (2 - t); }
+
+// Expose a global function script.js can call to start deceleration
+function startGlobeDeceleration(duration = 3000) {
+    if (globeDecelerating) return;
+    globeDecelerating = true;
+    globeDecelStart = performance.now();
+    globeDecelDuration = duration;
+
+    // Capture freeze values for each label so we can blend toward them
+    labelsArray.forEach(lbl => {
+        lbl.freezeValue = getTime(lbl.date);
+    });
+}
+window.startGlobeDeceleration = startGlobeDeceleration;
+
 function animate() {
     requestAnimationFrame(animate);
     
-    // Rotate globe
-    const rotationSpeed = 0.002;
-    globe.rotation.y += rotationSpeed;
-    atmosphere.rotation.y += rotationSpeed;
-    pointsGroup.rotation.y += rotationSpeed;
-    linesGroup.rotation.y += rotationSpeed;
-    textLabelsGroup.rotation.y += rotationSpeed;
+    // Determine rotation increment; may be decelerating
+    let rotationIncrement = rotationSpeed;
+    const nowPerf = performance.now();
+
+    if (globeDecelerating) {
+        const elapsed = nowPerf - globeDecelStart;
+        const progress = Math.min(elapsed / globeDecelDuration, 1);
+        const eased = easeOutQuad(progress);
+
+        // Rotation slows down toward 0
+        rotationIncrement = baseRotationSpeed * (1 - eased);
+
+        // Update label textures by blending live value -> freezeValue
+        labelsArray.forEach((lbl) => {
+            const { canvas, context, texture, date, freezeValue } = lbl;
+
+            const realValue = getTime(date);
+            const displayValue = Math.round(realValue * (1 - eased) + (freezeValue || realValue) * eased);
+
+            // redraw the label with the blended value
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = '#d0c8e0';
+            context.font = 'Bold 40px Courier New';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(displayValue, canvas.width / 2, canvas.height / 2);
+            texture.needsUpdate = true;
+        });
+
+        // When finished, finalize state
+        if (progress >= 1) {
+            globeDecelerating = false;
+            rotationSpeed = 0;
+            // Ensure labels show the final frozen values
+            labelsArray.forEach((lbl) => {
+                const { canvas, context, texture, date, freezeValue } = lbl;
+                const finalValue = Math.round(freezeValue || getTime(date));
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.fillStyle = '#d0c8e0';
+                context.font = 'Bold 40px Courier New';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(finalValue, canvas.width / 2, canvas.height / 2);
+                texture.needsUpdate = true;
+            });
+        }
+    } else {
+        // Normal label updates (existing behavior, throttled by `interval`)
+        const now = performance.now();
+        if (now - lastLabelUpdate >= interval) {
+            labelsArray.forEach((lbl) => {
+                const { canvas, context, texture, date } = lbl;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.fillStyle = '#d0c8e0';
+                context.font = 'Bold 40px Courier New';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(getTime(date), canvas.width / 2, canvas.height / 2);
+                texture.needsUpdate = true;
+            });
+            lastLabelUpdate = now;
+        }
+    }
+
+    // Apply rotation increment (either decelerating or steady)
+    globe.rotation.y += rotationIncrement;
+    atmosphere.rotation.y += rotationIncrement;
+    pointsGroup.rotation.y += rotationIncrement;
+    linesGroup.rotation.y += rotationIncrement;
+    textLabelsGroup.rotation.y += rotationIncrement;
     
     // Pulse effect on points
     time += 0.04;
@@ -193,23 +280,6 @@ function animate() {
         child.scale.set(scale, scale, scale);
     });
 
-    // Update label textures every `interval` milliseconds
-    const now = performance.now();
-    if (now - lastLabelUpdate >= interval) {
-        labelsArray.forEach((lbl) => {
-            const { canvas, context, texture, date } = lbl;
-            // Clear and redraw
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.fillStyle = '#d0c8e0';
-            context.font = 'Bold 40px Courier New';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(getTime(date), canvas.width / 2, canvas.height / 2);
-            texture.needsUpdate = true;
-        });
-        lastLabelUpdate = now;
-    }
-    
     renderer.render(scene, camera);
 }
 
