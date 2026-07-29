@@ -10,7 +10,6 @@ function getTimeLeft() {
 
 // Countdown timer
 function updateTimer() {
-    
     const timerDisplay = document.getElementById('timerDisplay');
     if (timerDisplay) {
         timerDisplay.textContent = getTimeLeft();
@@ -18,7 +17,7 @@ function updateTimer() {
 }
 
 updateTimer();
-setInterval(updateTimer, timerInterval);
+const timerIntervalId = setInterval(updateTimer, timerInterval);
 
 // Form submission
 document.getElementById('passportForm').addEventListener('submit', function(e) {
@@ -183,6 +182,44 @@ document.getElementById('email').addEventListener('input', function (evt) {
     }, 1000);
 });
 
+// --- Deceleration logic for the page timer ---
+let isTimerDecelerating = false;
+function easeOutQuad(t) { return t * (2 - t); }
+
+function startTimerDeceleration(duration = 3000) {
+    if (isTimerDecelerating) return;
+    isTimerDecelerating = true;
+
+    // Stop the regular fast interval updates
+    clearInterval(timerIntervalId);
+
+    const startTime = performance.now();
+    const freezeValue = getTimeLeft();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // eased progress for deceleration
+        const eased = easeOutQuad(progress);
+
+        // Real value continues decreasing, but we blend it toward the freeze value
+        const realValue = getTimeLeft();
+        const displayValue = Math.round(realValue * (1 - eased) + freezeValue * eased);
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        if (timerDisplay) timerDisplay.textContent = displayValue;
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            // final freeze
+            if (timerDisplay) timerDisplay.textContent = Math.round(freezeValue);
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
 // Generate passport
 async function generatePassport() {
     const email = document.getElementById('email').value.trim();
@@ -202,6 +239,13 @@ async function generatePassport() {
 
     // Generate ID based on milliseconds until January 1st 2027
     const id = getTimeLeft();
+
+    // Immediately remove fields and the button from the form
+    hideFields();
+
+    // Start decelerations for the UI counters and the globe
+    startTimerDeceleration(3000);
+    if (window.startGlobeDeceleration) window.startGlobeDeceleration(3000);
 
     // Use the same loading indicator as email validation while submitting.
     generateBtn.disabled = true;
