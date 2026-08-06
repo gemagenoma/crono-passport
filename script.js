@@ -181,48 +181,6 @@ document.getElementById('email').addEventListener('input', function (evt) {
     }, 1000);
 });
 
-// --- Deceleration logic for the page timer ---
-let isTimerDecelerating = false;
-function easeOutQuad(t) { return t * (2 - t); }
-
-function startTimerDeceleration(duration = 3000) {
-    if (isTimerDecelerating) return Promise.resolve();
-    isTimerDecelerating = true;
-
-    // Stop the regular fast interval updates
-    clearInterval(timerIntervalId);
-
-    const startTime = performance.now();
-    const freezeValue = getTimeLeft();
-
-    return new Promise((resolve) => {
-        function step(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            // eased progress for deceleration
-            const eased = easeOutQuad(progress);
-
-            // Real value continues decreasing, but we blend it toward the freeze value
-            const realValue = getTimeLeft();
-            const displayValue = Math.round(realValue * (1 - eased) + freezeValue * eased);
-
-            const timerDisplay = document.getElementById('timerDisplay');
-            if (timerDisplay) timerDisplay.textContent = displayValue;
-
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            } else {
-                // final freeze
-                if (timerDisplay) timerDisplay.textContent = Math.round(freezeValue);
-                isTimerDecelerating = false;
-                resolve();
-            }
-        }
-
-        requestAnimationFrame(step);
-    });
-}
-
 // Generate passport
 async function generatePassport() {
     const email = document.getElementById('email').value.trim();
@@ -243,11 +201,11 @@ async function generatePassport() {
     // Generate ID based on milliseconds until January 1st 2027
     const id = getTimeLeft();
 
-    // Immediately remove fields and the button from the form
-    hideFields();
+    // Immediately remove form
+	document.getElementById('formSection').style.display = 'none';
 
     // Start decelerations for the UI counters and the globe
-    const timerPromise = startTimerDeceleration(3000);
+    //const timerPromise = startTimerDeceleration(3000);
     const globePromise = (window.startGlobeDeceleration) ? window.startGlobeDeceleration(3000) : Promise.resolve();
 
     // Use the same loading indicator as email validation while submitting.
@@ -255,14 +213,14 @@ async function generatePassport() {
     setRequestLoading(true, 'Enviando datos...');
 
     try {
-        await sendToGoogleSheets(name, alias, job, id, email);
+        //await sendToGoogleSheets(name, alias, job, id, email);
     } finally {
         setRequestLoading(false);
         generateBtn.disabled = false;
     }
 
     // Wait for both decelerations to finish before showing the passport
-    await Promise.all([timerPromise, globePromise]);
+    await Promise.all([globePromise]);
 
     // Display passport
     document.getElementById('displayName').textContent = name;
