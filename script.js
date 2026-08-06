@@ -205,7 +205,6 @@ async function generatePassport() {
 	document.getElementById('formSection').style.display = 'none';
 
     // Start decelerations for the UI counters and the globe
-    //const timerPromise = startTimerDeceleration(3000);
     const globePromise = (window.startGlobeDeceleration) ? window.startGlobeDeceleration(3000) : Promise.resolve();
 
     // Use the same loading indicator as email validation while submitting.
@@ -213,7 +212,7 @@ async function generatePassport() {
     setRequestLoading(true, 'Enviando datos...');
 
     try {
-        //await sendToGoogleSheets(name, alias, job, id, email);
+        await sendToGoogleSheets(name, alias, job, id, email);
     } finally {
         setRequestLoading(false);
         generateBtn.disabled = false;

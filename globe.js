@@ -215,6 +215,9 @@ function startGlobeDeceleration(duration = 3000) {
 }
 window.startGlobeDeceleration = startGlobeDeceleration;
 
+// Pulsing control — when false the dots will not pulse
+let pulsing = true;
+
 function animate() {
     requestAnimationFrame(animate);
     
@@ -233,11 +236,8 @@ function animate() {
         // Update label textures by blending live value -> freezeValue
         labelsArray.forEach((lbl) => {
             const { canvas, context, texture, date, freezeValue } = lbl;
-
             const realValue = getTime(date);
             const displayValue = Math.round(realValue * (1 - eased) + (freezeValue || realValue) * eased);
-
-            // redraw the label with the blended value
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.fillStyle = '#d0c8e0';
             context.font = 'Bold 40px Courier New';
@@ -251,6 +251,7 @@ function animate() {
         if (progress >= 1) {
             globeDecelerating = false;
             rotationSpeed = 0;
+
             // Ensure labels show the final frozen values
             labelsArray.forEach((lbl) => {
                 const { canvas, context, texture, date, freezeValue } = lbl;
@@ -264,14 +265,19 @@ function animate() {
                 texture.needsUpdate = true;
             });
 
-            // Resolve any awaiting promise
-            if (typeof globeDecelResolve === 'function') {
-                globeDecelResolve();
-                globeDecelResolve = null;
-            }
+            // Remove label sprites and clear references
+            try { scene.remove(textLabelsGroup); } catch (e) {}
+            labelsArray.length = 0;
+
+            // Remove globe + atmosphere (or set .visible = false if you prefer)
+            try { scene.remove(globe); } catch (e) {}
+            try { scene.remove(atmosphere); } catch (e) {}
+
+            // Stop pulsing and normalize point scales
+            pulsing = false;
+            pointsGroup.children.forEach(child => child.scale.set(1, 1, 1));
         }
     } else {
-        // Normal label updates (existing behavior, throttled by `interval`)
         const now = performance.now();
         if (now - lastLabelUpdate >= interval) {
             labelsArray.forEach((lbl) => {
@@ -288,19 +294,23 @@ function animate() {
         }
     }
 
-    // Apply rotation increment (either decelerating or steady)
+    // Apply rotation increment
     globe.rotation.y += rotationIncrement;
     atmosphere.rotation.y += rotationIncrement;
     pointsGroup.rotation.y += rotationIncrement;
     linesGroup.rotation.y += rotationIncrement;
     textLabelsGroup.rotation.y += rotationIncrement;
-    
-    // Pulse effect on points
-    time += 0.04;
-    pointsGroup.children.forEach((child, index) => {
-        const scale = 1 + Math.sin(time + index * 0.5) * 0.5;
-        child.scale.set(scale, scale, scale);
-    });
+
+    // Pulse effect on points (stop if pulsing disabled)
+    if (pulsing) {
+        time += 0.04;
+        pointsGroup.children.forEach((child, index) => {
+            const scale = 1 + Math.sin(time + index * 0.5) * 0.5;
+            child.scale.set(scale, scale, scale);
+        });
+    } else {
+        pointsGroup.children.forEach(child => child.scale.set(1, 1, 1));
+    }
 
     renderer.render(scene, camera);
 }
